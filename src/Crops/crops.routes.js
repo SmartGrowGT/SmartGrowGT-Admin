@@ -6,6 +6,8 @@ import {
     createCropAdmin,
     updateCropAdmin,
     deleteCropAdmin,
+    activateCropAdmin,
+    getActiveCropsAdmin
 } from "./crops.controller.js";
 
 import { uploadCropImage } from "../../middlewares/file-uploader.js";
@@ -20,6 +22,7 @@ const router = Router();
 
 // Listar todos los cultivos
 router.get("/", getAllCropsAdmin);
+router.get("/active", getActiveCropsAdmin);
 
 // Buscar cultivo por nombre
 router.get("/:nombreCultivo", validateGetCropByName, getCropByNameAdmin);
@@ -44,6 +47,8 @@ router.put(
 );
 
 // Eliminar cultivo
-router.delete("/:id", validateGetCropById, deleteCropAdmin);
+router.put("/:id/deactivate", validateGetCropById, deleteCropAdmin);
+// Activar cultivo
+router.put("/:id/activate", validateGetCropById, activateCropAdmin);
 
 export default router;

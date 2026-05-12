@@ -15,6 +15,24 @@ export const getAllCropsAdmin = async (req, res) => {
     }
 };
 
+export const getActiveCropsAdmin = async (req, res) => {
+    try {
+        // Filtrar solo los cultivos activos
+        const crops = await Crop.find({ isActive: true }).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            data: crops,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error al obtener los cultivos activos",
+            error: error.message,
+        });
+    }
+};
+
 // BUSCAR CULTIVO POR NOMBRE
 export const getCropByNameAdmin = async (req, res) => {
     try {
@@ -133,21 +151,55 @@ export const deleteCropAdmin = async (req, res) => {
         if (!crop)
             return res.status(404).json({ success: false, message: "Cultivo no encontrado" });
 
-        // eliminar imagen de Cloudinary
+        // eliminar imagen de Cloudinary si quieres liberar espacio (opcional)
         if (crop.imageId) {
             await cloudinary.uploader.destroy(crop.imageId);
         }
 
-        await Crop.findByIdAndDelete(id);
+        // marcar como inactivo en vez de eliminar
+        crop.isActive = false;
+        await crop.save();
 
         res.status(200).json({
             success: true,
-            message: "Cultivo eliminado exitosamente",
+            message: "Cultivo desactivado exitosamente",
         });
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: "Error al eliminar el cultivo",
+            message: "Error al desactivar el cultivo",
+            error: error.message,
+        });
+    }
+};
+
+// ACTIVAR CULTIVO (revertir soft delete)
+export const activateCropAdmin = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const crop = await Crop.findById(id);
+
+        if (!crop)
+            return res.status(404).json({
+                success: false,
+                message: "Cultivo no encontrado",
+            });
+
+        // activar cultivo
+        crop.isActive = true;
+        await crop.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Cultivo activado exitosamente",
+            data: crop,
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error al activar el cultivo",
             error: error.message,
         });
     }
