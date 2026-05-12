@@ -31,7 +31,7 @@ export const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const usuario = await Usuario.findById(id); 
+        const usuario = await Usuario.findById(id);
 
         if (!usuario) {
             return res.status(404).json({
@@ -89,23 +89,23 @@ export const activateUser = async (req, res) => {
         );
 
         if (!user) {
-            return res.status(404).json({ 
-                success: false, 
-                message: 'Usuario no encontrado o ya está activo' 
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado o ya está activo'
             });
         }
 
-        res.status(200).json({ 
-            success: true, 
-            message: 'Usuario activado correctamente', 
-            user 
+        res.status(200).json({
+            success: true,
+            message: 'Usuario activado correctamente',
+            user
         });
 
     } catch (error) {
-        res.status(500).json({ 
-            success: false, 
-            message: 'Error al activar usuario', 
-            error 
+        res.status(500).json({
+            success: false,
+            message: 'Error al activar usuario',
+            error
         });
     }
 };
