@@ -7,9 +7,12 @@ import morgan from 'morgan';
 import { cordOptions } from './cors-configuration.js';
 import { dbConnection } from './db.js';
 import usersRoutes from '../src/Users/users.routes.js';
-import cultivosRoutes from '../src/Crops/crops.routes.js'
+import cultivosRoutes from '../src/Crops/crops.routes.js';
 import devicesRoutes from '../src/Devices/devices.routes.js';
 import adminsRoutes from '../src/Admins/admins.routes.js';
+import productsRoutes from '../src/Products/products.routes.js';
+import fertilizersRoutes from '../src/Fertilizers/fertilizers.routes.js';
+import ordersRoutes from '../src/Orders/orders.routes.js';
 
 const BASE_URL = '/smartgrowgt/v1/admin';
 
@@ -28,6 +31,9 @@ const routes = (app) => {
     app.use(`${BASE_URL}/cultivos`, cultivosRoutes);
     app.use(`${BASE_URL}/devices`, devicesRoutes);
     app.use(`${BASE_URL}/admins`, adminsRoutes);
+    app.use(`${BASE_URL}/products`, productsRoutes);
+    app.use(`${BASE_URL}/fertilizers`, fertilizersRoutes);
+    app.use(`${BASE_URL}/orders`, ordersRoutes);
 };
 
 // Iniciar servidor
