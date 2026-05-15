@@ -47,6 +47,12 @@ export const getFertilizerById = async (req, res) => {
 export const createFertilizer = async (req, res) => {
     try {
         const data = req.body;
+
+        if (req.file) {
+            data.image = req.file.path;
+            data.imageId = req.file.filename;
+        }
+
         const fertilizer = new Fertilizer(data);
         await fertilizer.save();
 
@@ -68,6 +74,11 @@ export const updateFertilizer = async (req, res) => {
     try {
         const { id } = req.params;
         const data = req.body;
+
+        if (req.file) {
+            data.image = req.file.path;
+            data.imageId = req.file.filename;
+        }
 
         const fertilizer = await Fertilizer.findByIdAndUpdate(id, data, { new: true });
 

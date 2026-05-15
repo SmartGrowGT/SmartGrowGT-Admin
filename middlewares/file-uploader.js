@@ -3,9 +3,13 @@ import dotenv from 'dotenv';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { v4 as uuidv4 } from 'uuid';
-import { extname } from 'path';
+import { extname, join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+dotenv.config({ path: join(__dirname, '../.env') });
 
 // Configuración de Cloudinary
 cloudinary.config({
@@ -67,6 +71,11 @@ const createCloudinaryUploader = (folder) => {
 // Imagenes para los Usuarios suban Cultivos
 export const uploadCropImage = createCloudinaryUploader(
     process.env.CLOUDINARY_FOLDER || 'SmartGrowGT/crops'
+);
+
+// Imagenes para los Fertilizantes
+export const uploadFertilizerImage = createCloudinaryUploader(
+    process.env.CLOUDINARY_FOLDER_FERTILIZERS || 'SmartGrowGT/fertilizers'
 );
 
 // Export cloudinary instance para usar en delete-file-on-error
