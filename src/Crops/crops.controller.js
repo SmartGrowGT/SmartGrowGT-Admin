@@ -83,6 +83,24 @@ export const createCropAdmin = async (req, res) => {
         cropData.image = req.file.path;
         cropData.imageId = req.file.filename;
 
+        // Map flattened inputs to nested ideal values for DB schema
+        cropData.idealNitrogen = {
+            min: req.body.minimumNitrogen ? Number(req.body.minimumNitrogen) : null,
+            max: req.body.maximumNitrogen ? Number(req.body.maximumNitrogen) : null
+        };
+        cropData.idealPhosphorus = {
+            min: req.body.minimumPhosphorus ? Number(req.body.minimumPhosphorus) : null,
+            max: req.body.maximumPhosphorus ? Number(req.body.maximumPhosphorus) : null
+        };
+        cropData.idealPotassium = {
+            min: req.body.minimumPotassium ? Number(req.body.minimumPotassium) : null,
+            max: req.body.maximumPotassium ? Number(req.body.maximumPotassium) : null
+        };
+        cropData.idealPH = {
+            min: req.body.minimumPH ? Number(req.body.minimumPH) : null,
+            max: req.body.maximumPH ? Number(req.body.maximumPH) : null
+        };
+
         const crop = new Crop(cropData);
         await crop.save();
 
@@ -110,6 +128,24 @@ export const updateCropAdmin = async (req, res) => {
             return res.status(404).json({ success: false, message: "Cultivo no encontrado" });
 
         const updateData = { ...req.body };
+
+        // Map flattened inputs to nested ideal values for DB schema
+        updateData.idealNitrogen = {
+            min: req.body.minimumNitrogen ? Number(req.body.minimumNitrogen) : null,
+            max: req.body.maximumNitrogen ? Number(req.body.maximumNitrogen) : null
+        };
+        updateData.idealPhosphorus = {
+            min: req.body.minimumPhosphorus ? Number(req.body.minimumPhosphorus) : null,
+            max: req.body.maximumPhosphorus ? Number(req.body.maximumPhosphorus) : null
+        };
+        updateData.idealPotassium = {
+            min: req.body.minimumPotassium ? Number(req.body.minimumPotassium) : null,
+            max: req.body.maximumPotassium ? Number(req.body.maximumPotassium) : null
+        };
+        updateData.idealPH = {
+            min: req.body.minimumPH ? Number(req.body.minimumPH) : null,
+            max: req.body.maximumPH ? Number(req.body.maximumPH) : null
+        };
 
         if (req.file) {
 
