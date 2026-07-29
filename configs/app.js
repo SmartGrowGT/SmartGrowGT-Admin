@@ -16,17 +16,29 @@ import ordersRoutes from '../src/Orders/orders.routes.js';
 
 const BASE_URL = '/smartgrowgt/v1/admin';
 
+// Instancia de Express a nivel global
+const app = express();
+
 // Configuración de middlewares
 const middlewares = (app) => {
     app.use(express.urlencoded({ extended: false, limit: '10mb' }));
     app.use(express.json({ limit: '10mb' }));
     app.use(cors(cordOptions));
     app.use(morgan('dev'));
-}
+};
 
 // Integración de rutas
 const routes = (app) => {
-  // Rutas de la aplicacion
+    // Health check registrado antes de las rutas
+    app.get(`${BASE_URL}/health`, (req, res) => {
+        res.status(200).json({
+            status: 'ok',
+            service: 'SmartGrowGT Admin',
+            version: '1.0.0'
+        });
+    });
+
+    // Rutas de la aplicación
     app.use(`${BASE_URL}/usuarios`, usersRoutes);
     app.use(`${BASE_URL}/cultivos`, cultivosRoutes);
     app.use(`${BASE_URL}/devices`, devicesRoutes);
@@ -36,33 +48,27 @@ const routes = (app) => {
     app.use(`${BASE_URL}/orders`, ordersRoutes);
 };
 
-// Iniciar servidor
-const initServer = async (app) => {
+// Aplicar middlewares y rutas inmediatamente
+middlewares(app);
+routes(app);
 
-    app = express();
+// Iniciar servidor local / conexión DB
+const initServer = async () => {
     const PORT = process.env.PORT || 3002;
 
     try {
-        dbConnection();
-        middlewares(app);
-        routes(app);
+        await dbConnection();
 
-        app.listen(PORT, () => {
-            console.log(`El servidor está en el puerto ${PORT}`);
-            console.log(`Base URL : http://localhost:${PORT}${BASE_URL}`);
-        });
-
-        app.get(`${BASE_URL}/health`, (req, res) => {
-            res.status(200).json({
-                status: 'ok',
-                service: 'SmartGrowGT Admin',
-                version: '1.0.0'
+        if (process.env.NODE_ENV !== 'production') {
+            app.listen(PORT, () => {
+                console.log(`El servidor está en el puerto ${PORT}`);
+                console.log(`Base URL : http://localhost:${PORT}${BASE_URL}`);
             });
-        });
-
+        }
     } catch (error) {
-        console.log(error);
+        console.error('Error al iniciar el servidor:', error);
     }
-}
+};
 
-export { initServer };
+// EXPORTACIÓN OBLIGATORIA DE 'app' Y 'initServer'
+export { initServer, app };
